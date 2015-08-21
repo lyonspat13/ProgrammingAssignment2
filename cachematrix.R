@@ -1,15 +1,34 @@
-## Put comments here that give an overall description of what your
-## functions do
+## The two functions serve to create a special "matrix" (list) object that allows for the inverse of the matrix
+## to be computed and retreived from cache.  This method relies on the super-assignment operator to make the
+## "matrix" (list) properties available to other environments.
 
-## Write a short comment describing this function
+
+## Creates the "matrix" list of functions so that we might be able to retrieve a cached inverse value
 
 makeCacheMatrix <- function(x = matrix()) {
-
+    m <- NULL
+    set <- function(y) {
+        x <<- y
+        m <<- NULL
+    }
+    get <- function() x
+    setinv <- function(solve) m <<- solve
+    getinv <- function() m
+    list(set = set, get = get,
+         setinv = setinv,
+         getinv = getinv)
 }
 
 
-## Write a short comment describing this function
+## Checks to see if the inverse exists in cache, and returns the inverse of the matrix
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    m <- x$getinv()
+    if(!is.null(m)) {
+        return(m)
+    }
+    data <- x$get()
+    m <- solve(data, ...)
+    x$setinv(m)
+    m
 }
